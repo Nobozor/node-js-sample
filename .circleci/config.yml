@@ -5,12 +5,13 @@ version: 2.1
 orbs:
   docker: circleci/docker@2.8.2
 
+
 workflows:
   build-docker-image:
     jobs:
       - docker/publish:
-          docker-password: $DOCKERHUB_PASSWORD
-          docker-username: $DOCKERHUB_USERNAME
+          docker-password: DOCKERHUB_PASSWORD
+          docker-username: DOCKERHUB_USERNAME
           image: $DOCKERHUB_USERNAME/app-sample-js
           tag: 0.1.$CIRCLE_BUILD_NUM
 
