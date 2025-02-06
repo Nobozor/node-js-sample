@@ -19,7 +19,9 @@ jobs:
 
       - run:
           name: Run docker image
-          command: docker run -p 8080:8080 app-sample-js:$TAG
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker run -p 8080:8080 $DOCKERHUB_USERNAME/app-sample-js:$TAG
 
       - run:
           name: Test the application
