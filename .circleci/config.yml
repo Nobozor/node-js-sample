@@ -14,12 +14,17 @@ jobs:
       - run:
           name: Build the docker images
           command: |
-            docker build -t $DOCKERHUB_USERNAME/app-sample-js:latest .
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker build -t $DOCKERHUB_USERNAME/app-sample-js:$TAG .
 
       - run:
-          name: Test the docker image
+          name: Run docker image
           command: |
-            docker run -p 8080:8080 $DOCKERHUB_USERNAME/app-sample-js:latest
+            docker run -p 8080:8080 $DOCKERHUB_USERNAME/app-sample-js:$TAG
+
+      - run:
+          name: Test the application
+          command: |
             curl -sSf http://localhost:8080
             curl -sSf http://localhost:8080/users
 
@@ -27,7 +32,7 @@ jobs:
           name: Push application Docker image
           command: |
             echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker push $DOCKERHUB_USERNAME/app-sample-js:latest
+            docker push $DOCKERHUB_USERNAME/app-sample-js:$TAG
 
 workflows:
   version: 2
