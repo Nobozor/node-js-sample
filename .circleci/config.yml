@@ -2,46 +2,26 @@ version: 2.1
 
 # Je veux build mon projet sur une image docker
 
+orbs:
+  docker: circleci/docker@2.8.2
+
 jobs:
-  build and push:
+  build:
     description: Build the docker images
     machine:
       image: ubuntu-2004:current
-      docker_layer_caching: true
-
+      docker_layer_caching: true 
     steps:
       - checkout
-      - run:
-          name: Build the docker images
-          command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            docker build -t $DOCKERHUB_USERNAME/app-sample-js:$TAG .
-
-      - run:
-          name: Run docker image
-          command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            docker run -d --rm -p 8080:8080 $DOCKERHUB_USERNAME/app-sample-js:$TAG
-
-      - run:
-          name: Test the application
-          command: |
-            curl -sSf http://localhost:8080
-            curl -sSf http://localhost:8080/users
-
-      - run:
-          name: Push application Docker image
-          command: |
-            TAG=0.1.$CIRCLE_BUILD_NUM
-            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker push $DOCKERHUB_USERNAME/app-sample-js:$TAG
+      - docker/publish:
+          docker-password: $DOCKERHUB_PASSWORD
+          docker-username: $DOCKERHUB_USERNAME
+          image: $DOCKERHUB_USERNAME/app-sample-js
+          tag: 0.1.$CIRCLE_BUILD_NUM
 
 workflows:
-  version: 2
-  build:
+  build-docker-image:
     jobs:
-      - build and push:
-          filters:
-            branches:
-              only:
-                - master
+      - build
+
+    
