@@ -5,16 +5,12 @@ version: 2.1
 jobs:
   build:
     description: Build the docker images
-    docker:
-      - image: cimg/base:2022.09
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
+    machine:
+      image: ubuntu-2004:current
+      docker_layer_caching: true
+
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - run:
           name: Build the docker images
           command: |
